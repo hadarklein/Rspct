@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GetUserName extends StatelessWidget {
-  GetUserName({required this.documentID});
+  const GetUserName({super.key, required this.documentID});
   final String documentID;
   
   @override
@@ -20,7 +20,7 @@ class GetUserName extends StatelessWidget {
           // return Text('First name: ${data['first_name']}');
           return Text('${data['first_name']} ${data['last_name']}');
         }
-        return Text('Loading...');
+        return const Text('Loading...');
       }),
     );
   }

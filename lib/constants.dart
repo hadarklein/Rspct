@@ -1,5 +1,30 @@
 import 'package:flutter/material.dart';
 
+
+TextStyle hiddenDrawerFontStyle = const TextStyle(
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+  fontSize: 16.5,
+  shadows: [
+    Shadow( // bottomLeft
+      offset: Offset(-0.5, -0.5),
+      color: Colors.black
+    ),
+    Shadow( // bottomRight
+      offset: Offset(0.5, -0.5),
+      color: Colors.black
+    ),
+    Shadow( // topRight
+      offset: Offset(0.5, 0.5),
+      color: Colors.black
+    ),
+    Shadow( // topLeft
+      offset: Offset(-0.5, 0.5),
+      color: Colors.black
+    ),
+  ]
+);
+
 class LoginTextField extends StatelessWidget {
   const LoginTextField(
       {Key? key,
@@ -33,6 +58,9 @@ class LoginTextField extends StatelessWidget {
   }
 }
 
+String flattenPhone(String phone) {
+  return phone.replaceAll('-', '').replaceAll('(', '').replaceAll(')', '');
+}
 
 
 

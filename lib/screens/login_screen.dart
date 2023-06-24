@@ -70,12 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               // hello again
-              Text('Hello Again!', style: GoogleFonts.bebasNeue(fontSize: 54)),
+              Text('Hello!', style: GoogleFonts.bebasNeue(fontSize: 54)),
               SizedBox(
                 height: 10,
               ),
               Text(
-                'Welcome back. You\'ve been missed',
+                'Welcome back',
                 style: TextStyle(
                   fontSize: 20,
                 ),

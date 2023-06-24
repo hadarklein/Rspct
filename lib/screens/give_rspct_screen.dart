@@ -1,60 +1,67 @@
 // import 'dart:ffi';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:fl_score_bar/fl_score_bar.dart';
-// import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-// import 'package:rspct/constants.dart';
 import 'package:rspct/buttons.dart';
 import 'package:rspct/rspct_icons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rspct/read_data/get_user_data.dart';
 
 
 class GiveRspctScreen extends StatefulWidget {
-  const GiveRspctScreen({Key? key, required this.user}) : super(key: key);
+  const GiveRspctScreen({Key? key, /*required this.user*/}) : super(key: key);
 
-  final User user;
+  // final User user;
 
   @override
   State<GiveRspctScreen> createState() => _GiveRspctState();
 }
 
 class _GiveRspctState extends State<GiveRspctScreen> {
+  final User _user = FirebaseAuth.instance.currentUser!;
   int _rating = 0;
   late Future <List<String>> _docIDs;
   // int _docIDsLength = 0;
-  String _chosen_friend_docID = '';
-  int _chosen_friend_doc_idx = -1;
-  String _chosen_friend_str = 'Choose a Friend';
-  String _confirmation_text = '';
-  final Map<String, String> _ID_Name_map = {};
+  String _chosenFriendDocID = '';
+  int _chosenFriendDocIdx = -1;
+  String _chosenFriendStr = 'Choose a Friend';
+  String _confirmationText = '';
+  final Map<String, String> _idNameMap = {};
 
   void sendRspct() {
     // 1. get the user that corresponds to the chosen_friend_docID
     // 2. update the value based on the _rating chosen
     FirebaseFirestore.instance
       .collection('user_data')
-      .doc(_chosen_friend_docID)
+      .doc(_chosenFriendDocID)
       .update(
         {'points': FieldValue.increment(_rating)}
       );
 
     setState(() {
-      _confirmation_text = '${_chosen_friend_str} has received ${_rating} Rspct!';
+      _confirmationText = '$_chosenFriendStr has received $_rating Rspct!';
     });
   }
 
   void chooseFriend() {
     // need to be in the children of the function that builds the dialog
     // 1. get all the ids/names of the possible friends
-    _docIDs = getDocIDs();
+    // _docIDs = getDocIDs();
+    _docIDs = getDocIDs2();
 
     // 2. build the list from there. Should be Expanded -> FutureBuilder , like in home_page_OLD
     // 3. build the list as a ListTile and when one is tapped, save the name/id
     // 4. then close the popup
-    chooseFriendDialog();
+
+    _docIDs.then((docIDs) {
+      if (docIDs.length > 0) {
+        chooseFriendDialog();
+      } else {
+        noFriendsDialog();
+      }
+    });
+    // chooseFriendDialog();
 
     // 5. display the chosen name
     
@@ -63,23 +70,22 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     // after choosing the name, update the friend
   }
 
-  Future<String> getNameFromDocID(int doc_idx) async {
-    // FirebaseFirestore.instance
-    //   .collection('user_data')
-    //   .doc(docID)
-    //   .get()
-    //   .then((snapshot) {
-    //     Map<String, dynamic>? data = snapshot.data();
-    //     snapshot.
-    //   },);
-    
+  Future<String> getNameFromDocID(String docID) async {
     String name = '';
-    await FirebaseFirestore.instance.collection('user_data').get().then(
-      (snapshot) {
-        QueryDocumentSnapshot<Map<String, dynamic>> doc = snapshot.docs.elementAt(doc_idx);
-        name = '${doc['first_name']} ${doc['last_name']}';
-      }
-    );
+    await FirebaseFirestore.
+      instance.collection('user_data').doc(docID).get().then(
+        (snapshot) {
+          Map<String, dynamic>? doc = snapshot.data();
+          name = '${doc?['first_name']} ${doc?['last_name']}';
+      },);
+
+    // String name = '';
+    // await FirebaseFirestore.instance.collection('user_data').get().then(
+    //   (snapshot) {
+    //     QueryDocumentSnapshot<Map<String, dynamic>> doc = snapshot.docs.elementAt(docIdx);
+    //     name = '${doc['first_name']} ${doc['last_name']}';
+    //   }
+    // );
     return name;
   }
 
@@ -90,6 +96,24 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     } else {
       return 30 * lengthDbl;
     }
+  }
+
+  Future noFriendsDialog() => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: Text('No Registered Contacts!'),
+      content: Text('You have not connected any of your contacts.\nPlease choose at least 1 contact to play with.'),
+      actions: [
+        TextButton(
+          onPressed: ok,
+          child: Text('Ok'),
+        )
+      ],
+    )
+  );
+
+  void ok() {
+    Navigator.of(context).pop();
   }
 
   Future chooseFriendDialog() => showDialog(
@@ -106,9 +130,10 @@ class _GiveRspctState extends State<GiveRspctScreen> {
         Expanded(
           child: FutureBuilder<List<String>>(
             future: _docIDs,
-            initialData: null,
+            // initialData: null,
             builder: (context, snapshot) {
-              var data = snapshot.data;
+              List<String>? data = snapshot.data;
+
               return SizedBox(
                 height: getHeight(data!.length),
                 width: 600,
@@ -127,9 +152,9 @@ class _GiveRspctState extends State<GiveRspctScreen> {
                         ),
                         onTap: () async {
                           // get the chosen index, docID, name
-                          _chosen_friend_doc_idx = index;
-                          _chosen_friend_docID = snapshot.data![_chosen_friend_doc_idx];
-                          _chosen_friend_str = await getNameFromDocID(_chosen_friend_doc_idx);
+                          _chosenFriendDocIdx = index;
+                          _chosenFriendDocID = snapshot.data![_chosenFriendDocIdx];
+                          _chosenFriendStr = await getNameFromDocID(_chosenFriendDocID);
                           // refresh the widget with the new variables
                           setState(() {});
                           // pop of the dialog box
@@ -156,7 +181,20 @@ class _GiveRspctState extends State<GiveRspctScreen> {
         (document) {
           String id = document.reference.id;
           docIDs.add(id);
-          _ID_Name_map[id] = '${document['first_name']} ${document['last_name']}';
+          _idNameMap[id] = '${document['first_name']} ${document['last_name']}';
+        }
+      )
+    );
+    return docIDs;
+  }
+
+  Future<List<String>> getDocIDs2() async {
+    List<String> docIDs = [];
+    await FirebaseFirestore.instance.collection('user_data').doc(_user.displayName)
+      .collection('contacts').get().then(
+      (snapshot) => snapshot.docs.forEach(
+        (doc) {
+          docIDs.add(doc['contactID']);
         }
       )
     );
@@ -172,10 +210,11 @@ class _GiveRspctState extends State<GiveRspctScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Give Some Rspct'),
-        backgroundColor: Colors.deepOrange,
-      ),
+      backgroundColor: const Color.fromARGB(255, 232, 232, 232),
+      // appBar: AppBar(
+      //   title: const Text('Give Some Rspct'),
+      //   backgroundColor: Colors.deepOrange,
+      // ),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -191,7 +230,7 @@ class _GiveRspctState extends State<GiveRspctScreen> {
                   style: buttonPrimary,
                   child: Text(
                     // friend,
-                    _chosen_friend_str,
+                    _chosenFriendStr,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -228,7 +267,7 @@ class _GiveRspctState extends State<GiveRspctScreen> {
               const SizedBox(height: 50,),
 
               Text(
-                _confirmation_text
+                _confirmationText
               ),
             ],
           )
@@ -236,5 +275,4 @@ class _GiveRspctState extends State<GiveRspctScreen> {
       ),
     );
   }
-
 }

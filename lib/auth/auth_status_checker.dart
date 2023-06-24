@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rspct/screens/home_page.dart';
+import 'package:rspct/hidden_drawer.dart';
+// import 'package:rspct/screens/home_page.dart';
 import 'package:rspct/auth/auth_page.dart';
 
 
@@ -16,7 +17,8 @@ class AuthStatusChecker extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return HomePage();
+            // return HomePage();
+            return HiddenDrawer();
           } else {
             return AuthPage();
           }

@@ -607,6 +607,8 @@ PODS:
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - contacts_service (0.2.2):
+    - Flutter
   - Firebase/Auth (10.9.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 10.9.0)
@@ -735,6 +737,7 @@ PODS:
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
@@ -762,6 +765,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  contacts_service:
+    :path: ".symlinks/plugins/contacts_service/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -775,6 +780,7 @@ SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   cloud_firestore: f9951b7475ab483af80514228921edbef7109fff
+  contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
   Firebase: bd152f0f3d278c4060c5c71359db08ebcfd5a3e2
   firebase_auth: cd9e9e9a59a8978f8708193a2a63a67cf4e57dc0
   firebase_core: fc68c0f9eec4e800b9418deff14a7e0a504016f3

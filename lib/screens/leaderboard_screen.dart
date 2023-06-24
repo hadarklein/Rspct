@@ -13,10 +13,11 @@ class _LeaderboardState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Leaderboard'),
-        backgroundColor: Colors.deepOrange,
-      ),
+      backgroundColor: Color.fromARGB(255, 232, 232, 232),
+      // appBar: AppBar(
+      //   title: Text('Leaderboard'),
+      //   backgroundColor: Colors.deepOrange,
+      // ),
     );
   }
 }

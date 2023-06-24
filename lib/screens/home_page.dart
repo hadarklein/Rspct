@@ -1,16 +1,17 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print
 
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-// import 'package:rspct/constants.dart';
-import 'package:rspct/buttons.dart';
-import 'package:rspct/read_data/get_user_data.dart';
-import 'package:rspct/screens/give_rspct_screen.dart';
-import 'package:rspct/screens/leaderboard_screen.dart';
-import 'package:rspct/screens/connect_with_friend_screen.dart';
+// import 'package:flutter/rendering.dart';
+// import 'package:rspct/buttons.dart';
+// import 'package:rspct/read_data/get_user_data.dart';
+// import 'package:rspct/screens/give_rspct_screen.dart';
+// import 'package:rspct/screens/leaderboard_screen.dart';
+// import 'package:rspct/screens/connect_with_friend_screen.dart';
 import 'package:loading_animations/loading_animations.dart';
+// import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   User user = FirebaseAuth.instance.currentUser!;
   String _displayname = '';
+  String idToken = '';
   
   loadDisplayName() async {
     var displayName = await _getDisplayName();
@@ -48,17 +50,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-          child: const Icon(Icons.logout_sharp),
-          onTap: () {
-            FirebaseAuth.instance.signOut();
-          },
-        ),
-        title: Text(_displayname),
-        // title: Text(user.email!),
-        backgroundColor: Colors.deepOrange,
-      ),
+      backgroundColor: Color.fromARGB(255, 232, 232, 232),
+      // appBar: AppBar(
+      //   leading: GestureDetector(
+      //     child: const Icon(Icons.logout_sharp),
+      //     onTap: () {
+      //       FirebaseAuth.instance.signOut();
+      //     },
+      //   ),
+      //   title: Text(_displayname),
+      //   // title: Text(user.email!),
+      //   backgroundColor: Colors.deepOrange,
+      // ),
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -98,52 +101,7 @@ class _HomePageState extends State<HomePage> {
                     // SizedBox
                     const SizedBox(height: 25,),
 
-                    // Give Rspct button
-                    RspctButtonStateless(text: 'Give Rspct!', func: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return GiveRspctScreen(user: user,);
-                          },
-                        ),
-                      );
-                    }),
-
-                    // SizedBox
-                    const SizedBox(height: 10,),
-
-                    // Leaderboard
-                    RspctButtonStateless(text: 'Leaderboard', func:() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return LeaderboardScreen();
-                          }
-                        )
-                      );
-                    }),
-
-
-                    // SizedBox
-                    const SizedBox(height: 10,),
-
-                    // Connect with a friend
-                    RspctButtonStateless(text: 'Connect With a Friend', func: () {
-                      Navigator.push(
-                        context, 
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return ConnectWithFriendScreen();
-                          }
-                        )
-                      );
-                    }),
-
-                    // Expanded(
-                    //   child: Text('Hello There!')
-                    // )
+                    
                   ],
                 ),
               ),
@@ -152,8 +110,99 @@ class _HomePageState extends State<HomePage> {
         }
       )
     );
-    
-    // if (_displayname == ''){
+  }  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+// this was inside the Column
+
+// // Give Rspct button
+// RspctButtonStateless(text: 'Give Rspct!', func: (){
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) {
+//         return GiveRspctScreen(/*user: user,*/);
+//       },
+//     ),
+//   );
+// }),
+
+// // SizedBox
+// const SizedBox(height: 10,),
+
+// // Leaderboard
+// RspctButtonStateless(text: 'Leaderboard', func:() {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) {
+//         return LeaderboardScreen();
+//       }
+//     )
+//   );
+// }),
+
+
+// // SizedBox
+// const SizedBox(height: 10,),
+
+// // Connect with a friend
+// RspctButtonStateless(text: 'Connect With a Friend', func: () {
+//   Navigator.push(
+//     context, 
+//     MaterialPageRoute(
+//       builder: (context) {
+//         return ConnectWithFriendScreen();
+//       }
+//     )
+//   );
+// }),
+
+// Expanded(
+//   child: Text('Hello There!')
+// )
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+// this was after the scaffold???
+
+// if (_displayname == ''){
     //   return Scaffold(
     //     appBar: AppBar(
     //       title: Text('null'),
@@ -258,5 +307,3 @@ class _HomePageState extends State<HomePage> {
     //     ),
     //   );
     // }
-  }  
-}

@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rspct/constants.dart';
 import 'package:rspct/buttons.dart';
@@ -67,7 +67,7 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 214, 214, 214),
+      backgroundColor: const Color.fromARGB(255, 214, 214, 214),
       appBar: AppBar(
         backgroundColor: Colors.deepOrange,
         elevation: 0,
@@ -76,12 +76,12 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 50.0),
+            margin: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Image.asset(
               'images/rspct_logo.png',
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 200.0,
           ),
           const Text(
@@ -113,7 +113,7 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
-          SizedBox(height: 100,)
+          const SizedBox(height: 100,)
         ]
       ),
     );

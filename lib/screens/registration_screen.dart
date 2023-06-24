@@ -17,38 +17,72 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreen extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
-  final _displaynameController = TextEditingController();
+  // final _displaynameController = TextEditingController();
   final _firstnameController = TextEditingController();
   final _lastnameController = TextEditingController();
   
-  Future register() async {
-    if (passwordConfirmed()) {
-      UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  Future<UserCredential> createUser(String email, String password) async {
+    UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
-      User? user = result.user;
-      user?.updateDisplayName(_displaynameController.text.trim());
+    return result;
+  }
 
-      addUserData(
-        _displaynameController.text.trim(),
-        _firstnameController.text.trim(),
-        _lastnameController.text.trim(),
-        _emailController.text.trim()
+  void deleteUser(UserCredential credential) {
+    credential.user!.delete();
+  }
+
+  void register() async {
+    if (passwordConfirmed()) {
+      // create a new user so it has access to Firebase in order to search phone numbers
+      UserCredential result = await createUser(
+        _emailController.text.trim(), 
+        _passwordController.text.trim()
       );
+      
+      // check the phone number ID isn't already register
+      String phone = flattenPhone(_phoneController.text.trim());
+      if (await phoneIdExists(phone)) {
+        // if already registered, delete user
+        // pop up
+        await openPhoneErrorDialog();
+
+        deleteUser(result);
+      } else {
+        // else register metadata to Firebase
+        String userDataId = await addUserData(
+          // _displaynameController.text.trim(),
+          phone,//_phoneController.text.trim(),
+          _firstnameController.text.trim(),
+          _lastnameController.text.trim(),
+          _emailController.text.trim()
+        );
+
+        User? user = result.user;
+        user?.updateDisplayName(userDataId);
+        // user?.updateDisplayName(_displaynameController.text.trim());
+      }
     } else {
       await openPasswordErrorDialog();
     }
   }
 
-  Future addUserData(String displayname, String firstname, String lastname, String email) async {
-    await FirebaseFirestore.instance.collection('user_data').add({
-      'displayname' : displayname,
+  Future<String> addUserData(/*String displayname,*/ String phone, String firstname, String lastname, String email) async {
+    var userDataId = await FirebaseFirestore.instance.collection('user_data').add({
+      // 'displayname' : displayname,
+      'phone_number' : phone,
       'first_name' : firstname,
       'last_name' : lastname,
       'email' : email,
     });
+    return userDataId.id;
+    // await FirebaseFirestore.instance.collection('user_data').doc(user_data_id.id).collection('connections').add({
+    //   'connection_name' : 'blerg',
+    //   'connection_id' : 'honk'
+    // });
   }
 
   bool passwordConfirmed() {
@@ -66,8 +100,36 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       content: Text('There was a mismatch between the typed passwords'),
       actions: [
         TextButton(
-          child: Text('Ok'),
           onPressed: ok,
+          child: Text('Ok'),
+        )
+      ],
+    ),
+  );
+
+  Future<bool> phoneIdExists(String phone) async {
+    bool phoneExists = false;
+    // await FirebaseFirestore.instance.collection('user_data').get().then(
+    //   (snapshot) => snapshot.docs.forEach(
+    //     (doc) {
+    //       // String id = doc.reference.id;
+    //       if (doc['phone_number'] == phone) {
+    //         phoneExists = true;
+    //       }
+    //     })
+    // );
+    return phoneExists;
+  }
+  
+  Future openPhoneErrorDialog() => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Phone Error!'),
+      content: Text('This phone number is already registered'),
+      actions: [
+        TextButton(
+          onPressed: ok, 
+          child: Text('OK')
         )
       ],
     ),
@@ -82,7 +144,8 @@ class _RegistrationScreen extends State<RegistrationScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _passwordConfirmController.dispose();
-    _displaynameController.dispose();
+    // _displaynameController.dispose();
+    _phoneController.dispose();
     _firstnameController.dispose();
     _lastnameController.dispose();
     super.dispose();
@@ -95,10 +158,8 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              // icon
-
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 50.0),
                 child: Image.asset(
@@ -125,21 +186,33 @@ class _RegistrationScreen extends State<RegistrationScreen> {
               SizedBox(height: 50),
 
               // first name textfield
-              LoginTextField(controller: _firstnameController, hintText: 'First Name'),
+              LoginTextField(
+                controller: _firstnameController, 
+                hintText: 'First Name'
+              ),
 
               SizedBox(
                 height: 10,
               ),
 
               // last name textfield
-              LoginTextField(controller: _lastnameController, hintText: 'Last Name'),
+              LoginTextField(
+                controller: _lastnameController, 
+                hintText: 'Last Name'
+              ),
 
               SizedBox(
                 height: 10,
               ),
 
-              // display name textfield
-              LoginTextField(controller: _displaynameController, hintText: 'Display Name'),
+              // // display name textfield
+              // LoginTextField(controller: _displaynameController, hintText: 'Display Name'),
+
+              // phone number - used as an UID for finding contacts from phone book
+              LoginTextField(
+                controller: _phoneController, 
+                hintText: 'Phone Number'
+              ),
 
               SizedBox(
                 height: 10,
@@ -147,7 +220,10 @@ class _RegistrationScreen extends State<RegistrationScreen> {
 
   
               // email textfield
-              LoginTextField(controller: _emailController, hintText: 'Email'),
+              LoginTextField(
+                controller: _emailController,
+                hintText: 'Email'
+              ),
 
               SizedBox(
                 height: 10,
