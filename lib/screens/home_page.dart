@@ -1,17 +1,8 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print
 
-
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
-// import 'package:rspct/buttons.dart';
-// import 'package:rspct/read_data/get_user_data.dart';
-// import 'package:rspct/screens/give_rspct_screen.dart';
-// import 'package:rspct/screens/leaderboard_screen.dart';
-// import 'package:rspct/screens/connect_with_friend_screen.dart';
 import 'package:loading_animations/loading_animations.dart';
-// import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,24 +13,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User user = FirebaseAuth.instance.currentUser!;
-  String _displayname = '';
+  // String _displayname = '';
   String idToken = '';
   
-  loadDisplayName() async {
-    var displayName = await _getDisplayName();
-    setState(() {
-      _displayname = displayName;
-    });
-  }
-  Future<String> _getDisplayName() async {
-    user = FirebaseAuth.instance.currentUser!;
-    // displayname = user.displayName!;
-    if (user.displayName == null) {
-      return '';
-    } else {
-      return user.displayName!;
-    }
-  }
+  // loadDisplayName() async {
+  //   var displayName = await _getDisplayName();
+  //   setState(() {
+  //     _displayname = displayName;
+  //   });
+  // }
+
+  // Future<String> _getDisplayName() async {
+  //   user = FirebaseAuth.instance.currentUser!;
+  //   // displayname = user.displayName!;
+  //   if (user.displayName == null) {
+  //     return '';
+  //   } else {
+  //     return user.displayName!;
+  //   }
+  // }
 
   @override
   void initState() {
@@ -50,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 232, 232),
+      backgroundColor: const Color.fromARGB(255, 232, 232, 232),
       // appBar: AppBar(
       //   leading: GestureDetector(
       //     child: const Icon(Icons.logout_sharp),
@@ -66,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data?.displayName == null) {
-            loadDisplayName();
+            // loadDisplayName();
             return SafeArea(
               child: Center(
                 child: Column(
@@ -86,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 50,),
                     // logo
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 50.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 50.0),
                       child: Image.asset(
                         'images/rspct_logo.png',
                       ),

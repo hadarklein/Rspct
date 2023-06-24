@@ -21,6 +21,6 @@ class RspctIcons {
   static const _kFontFam = 'RspctIcons';
   static const String? _kFontPkg = null;
 
-  static const IconData crown_empty = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData crown_filled = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData crownEmpty = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData crownFilled = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

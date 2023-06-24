@@ -1,5 +1,7 @@
 // import 'dart:ffi';
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -45,29 +47,20 @@ class _GiveRspctState extends State<GiveRspctScreen> {
   }
 
   void chooseFriend() {
-    // need to be in the children of the function that builds the dialog
     // 1. get all the ids/names of the possible friends
     // _docIDs = getDocIDs();
     _docIDs = getDocIDs2();
 
-    // 2. build the list from there. Should be Expanded -> FutureBuilder , like in home_page_OLD
-    // 3. build the list as a ListTile and when one is tapped, save the name/id
-    // 4. then close the popup
-
+    // 2. build the list as a ListTile and when one is tapped, save the name/id
+    // 3. then close the popup
+    // 4. display the chosen name
     _docIDs.then((docIDs) {
-      if (docIDs.length > 0) {
+      if (docIDs.isNotEmpty) {
         chooseFriendDialog();
       } else {
         noFriendsDialog();
       }
     });
-    // chooseFriendDialog();
-
-    // 5. display the chosen name
-    
-    // call function to bring up a pop up with a list view.
-    // choose a name from the list view
-    // after choosing the name, update the friend
   }
 
   Future<String> getNameFromDocID(String docID) async {
@@ -101,12 +94,12 @@ class _GiveRspctState extends State<GiveRspctScreen> {
   Future noFriendsDialog() => showDialog(
     context: context, 
     builder: (context) => AlertDialog(
-      title: Text('No Registered Contacts!'),
-      content: Text('You have not connected any of your contacts.\nPlease choose at least 1 contact to play with.'),
+      title: const Text('No Registered Contacts!'),
+      content: const Text('You have not connected any of your contacts.\nPlease choose at least 1 contact to play with.'),
       actions: [
         TextButton(
           onPressed: ok,
-          child: Text('Ok'),
+          child: const Text('Ok'),
         )
       ],
     )
@@ -177,13 +170,20 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     List<String> docIDs = [];
     
     await FirebaseFirestore.instance.collection('user_data').get().then(
-      (snapshot) => snapshot.docs.forEach(
-        (document) {
-          String id = document.reference.id;
+      (snapshot) {
+        for (var doc in snapshot.docs) {
+          String id = doc.reference.id;
           docIDs.add(id);
-          _idNameMap[id] = '${document['first_name']} ${document['last_name']}';
+          _idNameMap[id] = '${doc['first_name']} ${doc['last_name']}';
         }
-      )
+      }
+      // (snapshot) => snapshot.docs.forEach(
+      //   (document) {
+      //     String id = document.reference.id;
+      //     docIDs.add(id);
+      //     _idNameMap[id] = '${document['first_name']} ${document['last_name']}';
+      //   }
+      // )
     );
     return docIDs;
   }
@@ -192,11 +192,16 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     List<String> docIDs = [];
     await FirebaseFirestore.instance.collection('user_data').doc(_user.displayName)
       .collection('contacts').get().then(
-      (snapshot) => snapshot.docs.forEach(
-        (doc) {
+      (snapshot) {
+        for (var doc in snapshot.docs) {
           docIDs.add(doc['contactID']);
         }
-      )
+      }
+      // (snapshot) => snapshot.docs.forEach(
+      //   (doc) {
+      //     docIDs.add(doc['contactID']);
+      //   }
+      // )
     );
     return docIDs;
   }
@@ -252,7 +257,7 @@ class _GiveRspctState extends State<GiveRspctScreen> {
                 itemSize: 47.5,
                 itemPadding: const EdgeInsets.all(5),
                 unratedColor: Colors.grey.withAlpha(50),
-                itemBuilder: (context, _) => const Icon(RspctIcons.crown_filled, color: Colors.amber,), 
+                itemBuilder: (context, _) => const Icon(RspctIcons.crownFilled, color: Colors.amber,), 
                 onRatingUpdate: (rating) {
                   setState(() {
                     _rating = rating.toInt();

@@ -15,7 +15,7 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   User user = FirebaseAuth.instance.currentUser!;
   List<Contact> _contacts = [];
   List<Contact> _filteredContacts = [];
-  Map<String, String> _contactToFirebaseIDMap = {};
+  final Map<String, String> _contactToFirebaseIDMap = {};
   final _searchController = TextEditingController();
 
   @override
@@ -29,20 +29,20 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   }
 
   void addTestContacts(List<Contact> contacts) {
-    Contact contact_DC = Contact(
+    Contact contactDC = Contact(
       displayName: 'DickChaney',
       givenName: 'Dick',
       familyName: 'Chaney',
       phones: [Item(value: '5557830741'), Item(value: '5551234987')]
     );
-    Contact contact_BN = Contact(
+    Contact contactBN = Contact(
       displayName: 'BN',
       givenName: 'B',
       familyName: 'N',
       phones: [Item(value: '5551234568')]
     );
-    contacts.add(contact_DC);
-    contacts.add(contact_BN);
+    contacts.add(contactDC);
+    contacts.add(contactBN);
   }
 
   void getContacts() async {
@@ -53,28 +53,45 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     
     // 2. from the list of contacts, get the phone numbers and turn to uids
     // 3. access firestore and get the document id's of all the documents that correspond to the uid phone numbers
-    List<Contact> available_contacts = [];
+    List<Contact> availableContacts = [];
     await FirebaseFirestore.instance.collection('user_data').get().then(
-      (snapshot) => snapshot.docs.forEach((doc) {
-          contacts.forEach((contact) {
-            contact.phones?.forEach((number) {
+      (snapshot) {
+        for (var doc in snapshot.docs) {
+          for (Contact contact in contacts) {
+            for (var number in contact.phones!) {
               String flattenedPhone = flattenPhone(number.value.toString());
               String docPhone = doc['phone_number'];
               if (flattenedPhone == docPhone) {
                 // 4. hold these in a map from phone uid to document uid
-                // 5. remove the contacts that arent in the game server
-                available_contacts.add(contact);
+                // 5. remove the contacts that aren't in the game server
+                availableContacts.add(contact);
                 _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
               }
-            });
-          },);
-        }),
+            }
+          }
+        }
+      }
+      
+      // (snapshot) => snapshot.docs.forEach((doc) {
+      //     contacts.forEach((contact) {
+      //       contact.phones?.forEach((number) {
+      //         String flattenedPhone = flattenPhone(number.value.toString());
+      //         String docPhone = doc['phone_number'];
+      //         if (flattenedPhone == docPhone) {
+      //           // 4. hold these in a map from phone uid to document uid
+      //           // 5. remove the contacts that aren't in the game server
+      //           availableContacts.add(contact);
+      //           _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
+      //         }
+      //       });
+      //     },);
+      //   }
     );
 
     setState(() {
       //_contacts = contacts;
       // 6. present the filtered list
-      _contacts = available_contacts;
+      _contacts = availableContacts;
     });
   }
 
@@ -106,31 +123,29 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   Widget build(BuildContext context) {
     bool isSearching = _searchController.text.isNotEmpty;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 232, 232),
+      backgroundColor: const Color.fromARGB(255, 232, 232, 232),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              child: TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  labelText: 'Search Contacts',
-                  labelStyle: TextStyle(
-                    color: Colors.deepPurpleAccent
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurpleAccent
-                    )
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.deepPurpleAccent,)
+            TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                labelText: 'Search Contacts',
+                labelStyle: TextStyle(
+                  color: Colors.deepPurpleAccent
                 ),
-              )
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.deepPurpleAccent
+                  )
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.deepPurpleAccent,)
+              ),
             ),
             Expanded(
               child: ListView.builder(
@@ -150,7 +165,7 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
                         child: Text(contact.initials())
                       ),
                     onTap: () {
-                      // 1. get the phine number as a uid
+                      // 1. get the phone number as a uid
                       String phone = contact.phones![0].value.toString();
 
                       // 2. use the phone number to connect contact to Firebase
