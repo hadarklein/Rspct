@@ -30,13 +30,13 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
 
   void addTestContacts(List<Contact> contacts) {
     Contact contactDC = Contact(
-      displayName: 'DickChaney',
+      displayName: 'Dick Chaney',
       givenName: 'Dick',
       familyName: 'Chaney',
       phones: [Item(value: '5557830741'), Item(value: '5551234987')]
     );
     Contact contactBN = Contact(
-      displayName: 'BN',
+      displayName: 'B N',
       givenName: 'B',
       familyName: 'N',
       phones: [Item(value: '5551234568')]
@@ -95,13 +95,47 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     });
   }
 
-  void connectContact(String phone) {
+  void connectContact(String phone, String name) async {
     // 1. get the docID from the map using the given phone id
     // 2. update own collection to now be connected to this new docID
-    FirebaseFirestore.instance.collection('user_data')
+    await FirebaseFirestore.instance.collection('user_data')
       .doc(user.displayName).collection('contacts').add({
       'contactID' : _contactToFirebaseIDMap[phone],
     });
+
+    connectContactDialog(name);
+  }
+
+  Future connectContactDialog(String name) => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: const Text('New Connection!'),
+      content: Text('You are now connected with $name'),
+      actions: [
+        TextButton(
+          onPressed: ok, 
+          child: const Text('Ok')
+        )
+      ]
+    )
+  );
+
+  Future noFriendsDialog() => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: const Text('No Registered Contacts!'),
+      content: const Text('You have not connected any of your contacts.\nPlease choose at least 1 contact to play with.'),
+      actions: [
+        TextButton(
+          onPressed: ok,
+          child: const Text('Ok'),
+        )
+      ],
+    )
+  );
+
+  void ok() {
+    Navigator.of(context).pop();
   }
 
   void filterContacts() {
@@ -167,9 +201,10 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
                     onTap: () {
                       // 1. get the phone number as a uid
                       String phone = contact.phones![0].value.toString();
+                      String name = '${contact.givenName} ${contact.familyName}';
 
                       // 2. use the phone number to connect contact to Firebase
-                      connectContact(flattenPhone(phone));
+                      connectContact(flattenPhone(phone), name);
                     },
                   );
                 },

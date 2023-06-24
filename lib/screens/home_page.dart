@@ -13,29 +13,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User user = FirebaseAuth.instance.currentUser!;
-  // String _displayname = '';
+  String _displayname = '';
   String idToken = '';
   
-  // loadDisplayName() async {
-  //   var displayName = await _getDisplayName();
-  //   setState(() {
-  //     _displayname = displayName;
-  //   });
-  // }
+  loadDisplayName() async {
+    var displayName = await _getDisplayName();
+    setState(() {
+      _displayname = displayName;
+    });
+  }
 
-  // Future<String> _getDisplayName() async {
-  //   user = FirebaseAuth.instance.currentUser!;
-  //   // displayname = user.displayName!;
-  //   if (user.displayName == null) {
-  //     return '';
-  //   } else {
-  //     return user.displayName!;
-  //   }
-  // }
+  Future<String> _getDisplayName() async {
+    user = FirebaseAuth.instance.currentUser!;
+    if (user.displayName == null) {
+      return '';
+    } else {
+      return user.displayName!;
+    }
+  }
 
   @override
   void initState() {
-    // loadDisplayName();
     super.initState();
   }
 
@@ -43,28 +41,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 232, 232),
-      // appBar: AppBar(
-      //   leading: GestureDetector(
-      //     child: const Icon(Icons.logout_sharp),
-      //     onTap: () {
-      //       FirebaseAuth.instance.signOut();
-      //     },
-      //   ),
-      //   title: Text(_displayname),
-      //   // title: Text(user.email!),
-      //   backgroundColor: Colors.deepOrange,
-      // ),
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data?.displayName == null) {
-            // loadDisplayName();
+            loadDisplayName();
             return SafeArea(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    LoadingBouncingGrid.square(),
+                    LoadingBouncingGrid.circle(
+                      borderColor: Colors.deepPurpleAccent,
+                      backgroundColor: Colors.deepOrange,
+                      size: 120.0,
+                    ),
                   ],
                 ),
               ),

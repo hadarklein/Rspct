@@ -9,12 +9,11 @@ import 'package:rspct/buttons.dart';
 import 'package:rspct/rspct_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rspct/read_data/get_user_data.dart';
+import 'package:rspct/constants.dart';
 
 
 class GiveRspctScreen extends StatefulWidget {
-  const GiveRspctScreen({Key? key, /*required this.user*/}) : super(key: key);
-
-  // final User user;
+  const GiveRspctScreen({Key? key}) : super(key: key);
 
   @override
   State<GiveRspctScreen> createState() => _GiveRspctState();
@@ -23,10 +22,7 @@ class GiveRspctScreen extends StatefulWidget {
 class _GiveRspctState extends State<GiveRspctScreen> {
   final User _user = FirebaseAuth.instance.currentUser!;
   int _rating = 0;
-  late Future <List<String>> _docIDs;
-  // int _docIDsLength = 0;
   String _chosenFriendDocID = '';
-  int _chosenFriendDocIdx = -1;
   String _chosenFriendStr = 'Choose a Friend';
   String _confirmationText = '';
   final Map<String, String> _idNameMap = {};
@@ -46,21 +42,22 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     });
   }
 
-  void chooseFriend() {
-    // 1. get all the ids/names of the possible friends
-    // _docIDs = getDocIDs();
-    _docIDs = getDocIDs2();
+  void chooseFriend() async {
+    // 1. get all the ids/names of the user's registered connections
+    // List<String> docIDs = getDocIDs();
+    List<String> docIDs = await getDocIDs2();
 
-    // 2. build the list as a ListTile and when one is tapped, save the name/id
-    // 3. then close the popup
-    // 4. display the chosen name
-    _docIDs.then((docIDs) {
-      if (docIDs.isNotEmpty) {
-        chooseFriendDialog();
-      } else {
-        noFriendsDialog();
-      }
-    });
+    // 2. check to see if the user has any connections already
+    if (docIDs.isEmpty) {
+      // 2.a. if not, show a pop up informing the user to register connections
+      noFriendsDialog();
+    } else {
+      // 2.b. if yes:
+      // 3. build the list as a ListTile and when one is tapped, save the name/id
+      // 4. then close the popup
+      // 5. display the chosen name - not implemented yet
+      chooseFriendDialog(docIDs);
+    }
   }
 
   Future<String> getNameFromDocID(String docID) async {
@@ -109,7 +106,7 @@ class _GiveRspctState extends State<GiveRspctScreen> {
     Navigator.of(context).pop();
   }
 
-  Future chooseFriendDialog() => showDialog(
+  Future chooseFriendDialog(List<String> docIDs) => showDialog(
     context: context,
     builder: (context) => SimpleDialog(
       title: const Text(
@@ -121,47 +118,37 @@ class _GiveRspctState extends State<GiveRspctScreen> {
       backgroundColor: Colors.deepOrangeAccent,
       children: [
         Expanded(
-          child: FutureBuilder<List<String>>(
-            future: _docIDs,
-            // initialData: null,
-            builder: (context, snapshot) {
-              List<String>? data = snapshot.data;
-
-              return SizedBox(
-                height: getHeight(data!.length),
-                width: 600,
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: GetUserName(documentID: snapshot.data![index]),
-                        enableFeedback: true,
-                        isThreeLine: false,
-                        tileColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12))
-                        ),
-                        onTap: () async {
-                          // get the chosen index, docID, name
-                          _chosenFriendDocIdx = index;
-                          _chosenFriendDocID = snapshot.data![_chosenFriendDocIdx];
-                          _chosenFriendStr = await getNameFromDocID(_chosenFriendDocID);
-                          // refresh the widget with the new variables
-                          setState(() {});
-                          // pop of the dialog box
-                          Navigator.of(context).pop();
-                        },
-                        
-                      ),
-                    );
-                  }
-                ),
-              );
-            }
-          ),
-        )
+          child: SizedBox(
+            height: getHeight(docIDs.length),
+            width: 600,
+            child: ListView.builder(
+              itemCount: docIDs.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: GetUserName(documentID: docIDs[index]),
+                    enableFeedback: true,
+                    isThreeLine: false,
+                    tileColor: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12))
+                    ),
+                    onTap: () async {
+                      // get the chosen index, docID, name
+                      _chosenFriendDocID = docIDs[index];
+                      _chosenFriendStr = await getNameFromDocID(_chosenFriendDocID);
+                      // refresh the widget with the new variables
+                      setState(() {});
+                      // pop off the dialog box
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }
+            ),
+          )
+        ),
       ],
     ),
   );

@@ -61,8 +61,3 @@ class LoginTextField extends StatelessWidget {
 String flattenPhone(String phone) {
   return phone.replaceAll('-', '').replaceAll('(', '').replaceAll(')', '');
 }
-
-
-
-
-

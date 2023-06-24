@@ -129,7 +129,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       actions: [
         TextButton(
           onPressed: ok, 
-          child: Text('OK')
+          child: Text('Ok')
         )
       ],
     ),
