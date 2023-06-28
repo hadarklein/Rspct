@@ -71,21 +71,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
           }
         }
       }
-      
-      // (snapshot) => snapshot.docs.forEach((doc) {
-      //     contacts.forEach((contact) {
-      //       contact.phones?.forEach((number) {
-      //         String flattenedPhone = flattenPhone(number.value.toString());
-      //         String docPhone = doc['phone_number'];
-      //         if (flattenedPhone == docPhone) {
-      //           // 4. hold these in a map from phone uid to document uid
-      //           // 5. remove the contacts that aren't in the game server
-      //           availableContacts.add(contact);
-      //           _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
-      //         }
-      //       });
-      //     },);
-      //   }
     );
 
     setState(() {
@@ -98,12 +83,33 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   void connectContact(String phone, String name) async {
     // 1. get the docID from the map using the given phone id
     // 2. update own collection to now be connected to this new docID
-    await FirebaseFirestore.instance.collection('user_data')
-      .doc(user.displayName).collection('contacts').add({
-      'contactID' : _contactToFirebaseIDMap[phone],
-    });
+    if (!await isAlreadyConnected(phone)) {
+      await FirebaseFirestore.instance.collection('user_data')
+        .doc(user.displayName).collection('contacts').add({
+        'contactID' : _contactToFirebaseIDMap[phone],
+      });
+      connectContactDialog(name);
+    } else {
+      alreadyConnectedDialog(name);
+    }
+  }
 
-    connectContactDialog(name);
+  Future<bool> isAlreadyConnected(String phone) async {
+    bool isConnected = false;
+    await FirebaseFirestore.instance.collection('user_data')
+      .doc(user.displayName).collection('contacts').get().then(
+      (snapshot) {
+        for (var doc in snapshot.docs) {
+          String docContactID = doc['contactID'];
+          String mapContactID = _contactToFirebaseIDMap[phone]!;
+          if (docContactID == mapContactID) {
+            isConnected = true;
+            break;
+          }
+        }
+      }
+    );
+    return isConnected;
   }
 
   Future connectContactDialog(String name) => showDialog(
@@ -117,6 +123,20 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
           child: const Text('Ok')
         )
       ]
+    )
+  );
+
+  Future alreadyConnectedDialog(String name) => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: const Text('Already Connected!'),
+      content: Text('You and $name are already connected'),
+      actions: [
+        TextButton(
+          onPressed: ok, 
+          child: const Text('Ok')
+        )
+      ],
     )
   );
 
