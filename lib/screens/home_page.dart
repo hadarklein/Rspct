@@ -18,14 +18,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   User _user = FirebaseAuth.instance.currentUser!;
   final Stream<QuerySnapshot> _userStream = FirebaseFirestore.instance.collection('user_data').snapshots();
   String _displayname = '';
-  //String _points = '0';
-  
   String _currentScore = '0';
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
 
   loadDisplayName() async {
     var displayName = await _getDisplayName();
@@ -135,12 +128,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             );
                           } ,
                         ),
-                        // child: Text(
-                        //   '$_currentScore',
-                        //   style: const TextStyle(
-                        //     fontSize: 65,
-                        //     fontWeight: FontWeight.bold
-                        //   ),
                       )
                     ),
                   ),
