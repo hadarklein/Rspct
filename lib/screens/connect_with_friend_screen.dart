@@ -4,18 +4,23 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rspct/constants.dart';
 
+
+
 class ConnectWithFriendScreen extends StatefulWidget {
   const ConnectWithFriendScreen({Key? key}) : super(key: key);
+
+  static const id = 'connect_with_friend_screen';
 
   @override
   State<ConnectWithFriendScreen> createState() => _ConnectWithFriendState();
 }
 
 class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
-  User user = FirebaseAuth.instance.currentUser!;
+  final User _user = FirebaseAuth.instance.currentUser!;
   List<Contact> _contacts = [];
   List<Contact> _filteredContacts = [];
-  final Map<String, String> _contactToFirebaseIDMap = {};
+  final Map<String, RspctContact> _contactToRspctContactMap = {};
+  // final Map<String, String> _contactToFirebaseIDMap = {};
   final _searchController = TextEditingController();
 
   @override
@@ -65,7 +70,10 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
                 // 4. hold these in a map from phone uid to document uid
                 // 5. remove the contacts that aren't in the game server
                 availableContacts.add(contact);
-                _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
+                // _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
+                String name = '${contact.givenName.toString()} ${contact.familyName.toString()}';
+                // String initials = '${contact.givenName.toString()[0]}${contact.familyName.toString()[0]}';
+                _contactToRspctContactMap[doc['phone_number']] = RspctContact(name: name, docID: doc.id);
               }
             }
           }
@@ -85,8 +93,10 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     // 2. update own collection to now be connected to this new docID
     if (!await isAlreadyConnected(phone)) {
       await FirebaseFirestore.instance.collection('user_data')
-        .doc(user.displayName).collection('contacts').add({
-        'contactID' : _contactToFirebaseIDMap[phone],
+        .doc(_user.displayName).collection('contacts').add({
+          // 'contactID' : _contactToFirebaseIDMap[phone],
+          'contactID' : _contactToRspctContactMap[phone]!.docID,
+          'contactName' : _contactToRspctContactMap[phone]!.name,
       });
       connectContactDialog(name);
     } else {
@@ -97,11 +107,12 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   Future<bool> isAlreadyConnected(String phone) async {
     bool isConnected = false;
     await FirebaseFirestore.instance.collection('user_data')
-      .doc(user.displayName).collection('contacts').get().then(
+      .doc(_user.displayName).collection('contacts').get().then(
       (snapshot) {
         for (var doc in snapshot.docs) {
           String docContactID = doc['contactID'];
-          String mapContactID = _contactToFirebaseIDMap[phone]!;
+          // String mapContactID = _contactToFirebaseIDMap[phone]!;
+          String mapContactID = _contactToRspctContactMap[phone]!.docID;
           if (docContactID == mapContactID) {
             isConnected = true;
             break;
@@ -177,6 +188,10 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   Widget build(BuildContext context) {
     bool isSearching = _searchController.text.isNotEmpty;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Connect with a Friend'),
+        backgroundColor: Colors.deepOrange,
+      ),
       backgroundColor: const Color.fromARGB(255, 232, 232, 232),
       body: Container(
         padding: const EdgeInsets.all(20),

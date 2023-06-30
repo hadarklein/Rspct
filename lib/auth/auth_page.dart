@@ -1,30 +1,32 @@
-import 'package:flutter/material.dart';
-import 'package:rspct/screens/login_screen.dart';
-import 'package:rspct/screens/registration_screen.dart';
+// import 'package:flutter/material.dart';
+// import 'package:rspct/screens/login_screen.dart';
+// import 'package:rspct/screens/registration_screen.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({Key? key}) : super(key: key);
+// class AuthPage extends StatefulWidget {
+//   const AuthPage({Key? key}) : super(key: key);
 
-  @override
-  State<AuthPage> createState() => _AuthPageState();
-}
+//   static const id = 'auth_page_screen';
 
-class _AuthPageState extends State<AuthPage> {
-  // initially show the login page
-  bool showLoginPage = true;
+//   @override
+//   State<AuthPage> createState() => _AuthPageState();
+// }
 
-  void toggleScreens() {
-    setState(() {
-      showLoginPage = !showLoginPage;
-    });
-  }
+// class _AuthPageState extends State<AuthPage> {
+//   // initially show the login page
+//   bool showLoginPage = true;
 
-  @override
-  Widget build(BuildContext context) {
-    if (showLoginPage) {
-      return LoginScreen(showRegisterScreen: toggleScreens);
-    } else {
-      return RegistrationScreen(showLoginScreen: toggleScreens);
-    }
-  }
-}
+//   void toggleScreens() {
+//     setState(() {
+//       showLoginPage = !showLoginPage;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     if (showLoginPage) {
+//       return LoginScreen(/*showRegisterScreen: toggleScreens*/);
+//     } else {
+//       return RegistrationScreen(/*showLoginScreen: toggleScreens*/);
+//     }
+//   }
+// }

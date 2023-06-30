@@ -10,6 +10,8 @@ import 'package:rspct/buttons.dart';
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
 
+  static const id = 'forgot_pw_screen';
+
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordState(); 
 }

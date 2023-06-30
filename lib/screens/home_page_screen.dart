@@ -6,9 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:rspct/animations/circle_animator.dart';
 import 'package:google_fonts/google_fonts.dart';
+// import 'package:rspct/constants.dart';
+import 'package:rspct/rspct_icons.dart';
+import 'package:rspct/screens/give_rspct_screen.dart';
+import 'package:rspct/screens/connect_with_friend_screen.dart';
+import 'package:rspct/screens/login_screen.dart';
+// import 'package:rspct/screens/leaderboard_screen.dart';
+// import 'package:rspct/screens/logout_screen.dart';
+// import 'package:rspct/auth/auth_status_checker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  static const id = 'homepage_screen';
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,7 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   User _user = FirebaseAuth.instance.currentUser!;
   final Stream<QuerySnapshot> _userStream = FirebaseFirestore.instance.collection('user_data').snapshots();
   String _displayname = '';
-  String _currentScore = '0';
+  int _currentScore = 0;
 
   loadDisplayName() async {
     var displayName = await _getDisplayName();
@@ -39,17 +49,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    loadDisplayName();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 232, 232),
+      appBar: AppBar(
+        title: const Text('Home'),
+        backgroundColor: Colors.deepOrange,
+      ),
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data?.displayName == null) {
-            loadDisplayName();
+            // loadDisplayName();
             return SafeArea(
               child: Center(
                 child: Column(
@@ -120,7 +135,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             }
                             
                             return Text(
-                              _currentScore,
+                              _currentScore.toString(),
                               style: const TextStyle(
                                 fontSize: 65,
                                 fontWeight: FontWeight.bold
@@ -135,7 +150,62 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             );
           }
         }
-      )
+      ),
+      drawer: Drawer(
+        // backgroundColor: ,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.deepOrange,
+              ),
+              child: Text(_displayname),
+            ),
+            // ListTile(Homepage),
+            ListTile(
+              // leading: const Icon(Icons.add_box_outlined),
+              leading: const Icon(RspctIcons.crownEmpty),
+              title: const Text('Give Some Rspct!'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, GiveRspctScreen.id);
+              }
+            ),
+            // ListTile(
+            //   leading: const Icon(Icons.leaderboard_outlined),
+            //   title: const Text('Leaderboard'),
+            //   onTap: () {
+            //     drawerNavigation(context, const LeaderboardScreen());
+            //   },
+            // ),
+            ListTile(
+              leading: const Icon(Icons.people_outline),
+              title: const Text('Find Friends'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, ConnectWithFriendScreen.id);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.logout_outlined,
+                color: Colors.redAccent,
+              ),
+              title: const Text(
+                'Sign Out',
+                style: TextStyle(
+                  color: Colors.redAccent
+                ),
+              ),
+              onTap: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.popAndPushNamed(context, LoginScreen.id);
+              },
+            )
+          ],
+        ),
+      ),
     );
   }  
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 TextStyle hiddenDrawerFontStyle = const TextStyle(
@@ -60,4 +61,40 @@ class LoginTextField extends StatelessWidget {
 
 String flattenPhone(String phone) {
   return phone.replaceAll('-', '').replaceAll('(', '').replaceAll(')', '');
+}
+
+class RspctContact {
+  RspctContact({
+    required this.name, 
+    required this.docID})
+  : initials = '${name[0]}${name[name.indexOf(' ') + 1]}';
+
+  final String name;
+  final String docID;
+  final String initials;
+}
+
+Future<List<RspctContact>> getContactIDsFromUser(String userDocID) async {
+  // List<String> docIDs = [];
+  List<RspctContact> contacts = [];
+  await FirebaseFirestore.instance.collection('user_data').doc(userDocID)
+    .collection('contacts').get().then(
+    (snapshot) {
+      for (var doc in snapshot.docs) {
+        // docIDs.add(doc['contactID']);
+        RspctContact contact = RspctContact(name: doc['contactName'], docID: doc['contactID']);
+        contacts.add(contact);
+      }
+    }
+  );
+  return contacts;
+}
+
+
+drawerNavigation(BuildContext context, Widget screen) {
+  Navigator.pop(context);
+  Navigator.push(
+    context, 
+    MaterialPageRoute(builder: (context) => screen)
+  );
 }

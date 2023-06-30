@@ -8,8 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rspct/buttons.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key, required this.showLoginScreen}) : super(key: key);
-  final VoidCallback showLoginScreen;
+  const RegistrationScreen({Key? key, /*required this.showLoginScreen*/}) : super(key: key);
+  // final VoidCallback showLoginScreen;
+
+  static const id = 'registration_screen';
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreen();
@@ -64,6 +66,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
         User? user = result.user;
         user?.updateDisplayName(userDataId);
         // user?.updateDisplayName(_displaynameController.text.trim());
+        // Navigator.pop(context);
       }
     } else {
       await openPasswordErrorDialog();
@@ -77,6 +80,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       'first_name' : firstname,
       'last_name' : lastname,
       'email' : email,
+      'points' : 0
     });
     return userDataId.id;
     // await FirebaseFirestore.instance.collection('user_data').doc(user_data_id.id).collection('connections').add({
@@ -154,6 +158,10 @@ class _RegistrationScreen extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register'),
+        backgroundColor: Colors.deepOrange,
+      ),
       backgroundColor: Color.fromARGB(255, 214, 214, 214),
       body: SafeArea(
         child: Center(
@@ -167,15 +175,13 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 ),
               ),
 
-              SizedBox(
-                height: 25.0,
-              ),
+              SizedBox(height: 20.0,),
 
               // hello again
               Text('Hello There!', style: GoogleFonts.bebasNeue(fontSize: 54)),
-              SizedBox(
-                height: 10,
-              ),
+              
+              SizedBox(height: 10,),
+
               Text(
                 'Welcome. Please Register.',
                 style: TextStyle(
@@ -183,7 +189,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 ),
               ),
 
-              SizedBox(height: 50),
+              SizedBox(height: 45),
 
               // first name textfield
               LoginTextField(
@@ -191,9 +197,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 hintText: 'First Name'
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               // last name textfield
               LoginTextField(
@@ -201,9 +205,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 hintText: 'Last Name'
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               // // display name textfield
               // LoginTextField(controller: _displaynameController, hintText: 'Display Name'),
@@ -214,9 +216,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 hintText: 'Phone Number'
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
   
               // email textfield
@@ -225,9 +225,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 hintText: 'Email'
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               // password textfield
               LoginTextField(
@@ -236,9 +234,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 obscureText: true,
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               // password confirm textfield
               LoginTextField(
@@ -247,9 +243,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 obscureText: true,
               ),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               Container(
                 width: 1000,
@@ -269,9 +263,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                 ),
               ),
               
-                SizedBox(
-                height: 25,
-              ),
+              SizedBox(height: 20,),
 
               // register button
               Row(
@@ -284,7 +276,10 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: widget.showLoginScreen,
+                    // onTap: widget.showLoginScreen,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       'Sign In Now!',
                       style: TextStyle(

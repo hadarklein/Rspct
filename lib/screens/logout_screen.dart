@@ -1,25 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
 
-class LogoutScreen extends StatefulWidget {
-  const LogoutScreen({ Key? key }) : super(key: key);
+// class LogoutScreen extends StatefulWidget {
+//   const LogoutScreen({ Key? key }) : super(key: key);
 
-  @override
-  State<LogoutScreen> createState() => _LogoutScreenState();
-}
+//   static const id = 'logout_screen';
 
-class _LogoutScreenState extends State<LogoutScreen> {
+//   @override
+//   State<LogoutScreen> createState() => _LogoutScreenState();
+// }
+
+// class _LogoutScreenState extends State<LogoutScreen> {
   
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.signOut();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     FirebaseAuth.instance.signOut();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
       
-    );
-  }
-}
+//     );
+//   }
+// }

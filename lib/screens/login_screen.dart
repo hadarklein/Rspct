@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rspct/screens/forgot_pw_screen.dart';
 import 'package:rspct/buttons.dart';
+import 'package:rspct/screens/home_page_screen.dart';
+import 'package:rspct/screens/registration_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key, required this.showRegisterScreen}) : super(key: key);
-  final VoidCallback showRegisterScreen;
+  const LoginScreen({Key? key, /*required this.showRegisterScreen*/}) : super(key: key);
+  // final VoidCallback showRegisterScreen;
+
+  static const id = 'login_screen';
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -20,16 +24,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Center(
-          child: CircularProgressIndicator(
-            color: Colors.deepOrangeAccent,
-          ),
-        );
-      }
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return Center(
+    //       child: CircularProgressIndicator(
+    //         color: Colors.deepOrangeAccent,
+    //       ),
+    //     );
+    //   }
+    // );
 
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
@@ -37,7 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     // pop the loading circle
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseAuth.instance.authStateChanges().listen((event) {
+      if (event != null) {
+        Navigator.pushNamed(context, HomePage.id);
+      }
+    });
   }
 
   @override
@@ -50,6 +65,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+        backgroundColor: Colors.deepOrange,
+      ),
       backgroundColor: Color.fromARGB(255, 214, 214, 214),
       body: SafeArea(
         child: Center(
@@ -65,15 +84,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              SizedBox(
-                height: 25.0,
-              ),
+              SizedBox(height: 25.0,),
 
               // hello again
               Text('Hello!', style: GoogleFonts.bebasNeue(fontSize: 54)),
-              SizedBox(
-                height: 10,
-              ),
+              
+              SizedBox(height: 10,),
+
               Text(
                 'Welcome back',
                 style: TextStyle(
@@ -86,9 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // email textfield
               LoginTextField(controller: _emailController, hintText: 'Email'),
 
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10,),
 
               // password textfield
               LoginTextField(
@@ -97,26 +112,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
               ),
 
-              SizedBox(
-                height: 10,
-              ),
-
+              SizedBox(height: 10,),
 
               Padding(
-                padding: const EdgeInsets.all(16.5),
+                padding: const EdgeInsets.symmetric(vertical: 16.5, horizontal: 25),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return ForgotPasswordScreen();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, ForgotPasswordScreen.id);
                       },
                       child: Text(
                         'Forgot Password?',
@@ -132,56 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               SizedBox(height: 10),
               
-              // sign in button
-              // GestureDetector(
-              //   onTap: signIn,
-              //   child: Container(
-              //     margin: const EdgeInsets.symmetric(horizontal: 25.0),
-              //     padding: EdgeInsets.all(20),
-              //     decoration: BoxDecoration(
-              //       color: Color.fromARGB(255, 255, 87, 34),
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //     child: Center(
-              //       child: Text(
-              //         'Sign In',
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //           fontWeight: FontWeight.bold,
-              //           fontSize: 18,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-              // SizedBox(
-              //   height: 10,
-              // ),
-
-              // Container(
-              //   width: 1000,
-              //   height: 50,
-              //   margin: const EdgeInsets.symmetric(horizontal: 25.0),
-              //   child: ElevatedButton(
-              //     onPressed: signIn,
-              //     style: buttonPrimary,
-              //     child: Text(
-              //       'Sign In',
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //         fontWeight: FontWeight.bold,
-              //         fontSize: 18,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              
               RspctButtonStateless(text: 'Sign In', func: signIn),
               
-              SizedBox(
-                height: 25,
-              ),
+              SizedBox(height: 25,),
 
               // register button
               Row(
@@ -194,7 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: widget.showRegisterScreen,
+                    // onTap: widget.showRegisterScreen,
+                    onTap: () {
+                      Navigator.pushNamed(context, RegistrationScreen.id);
+                    },
                     child: Text(
                       'Register Now!',
                       style: TextStyle(
