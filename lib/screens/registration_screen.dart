@@ -40,7 +40,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
   void register() async {
     if (passwordConfirmed()) {
       // create a new user so it has access to Firebase in order to search phone numbers
-      UserCredential result = await createUser(
+      UserCredential credential = await createUser(
         _emailController.text.trim(), 
         _passwordController.text.trim()
       );
@@ -52,7 +52,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
         // pop up
         await openPhoneErrorDialog();
 
-        deleteUser(result);
+        deleteUser(credential);
       } else {
         // else register metadata to Firebase
         String userDataId = await addUserData(
@@ -63,10 +63,11 @@ class _RegistrationScreen extends State<RegistrationScreen> {
           _emailController.text.trim()
         );
 
-        User? user = result.user;
-        user?.updateDisplayName(userDataId);
+        User? user = credential.user;
+        await user?.updateDisplayName(userDataId);
         // user?.updateDisplayName(_displaynameController.text.trim());
-        // Navigator.pop(context);
+
+        Navigator.pop(context, credential);
       }
     } else {
       await openPasswordErrorDialog();
@@ -79,6 +80,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       'phone_number' : phone,
       'first_name' : firstname,
       'last_name' : lastname,
+      'initials' : '${firstname[0]}${lastname[0]}',
       'email' : email,
       'points' : 0
     });

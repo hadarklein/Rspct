@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:rspct/auth/auth_page.dart';
-// import 'package:rspct/auth/auth_status_checker.dart';
-// import 'auth/auth_status_checker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rspct/screens/choose_friend_screen.dart';
 import 'package:rspct/screens/connect_with_friend_screen.dart';
@@ -10,7 +7,6 @@ import 'package:rspct/screens/give_rspct_screen.dart';
 import 'package:rspct/screens/home_page_screen.dart';
 import 'package:rspct/screens/leaderboard_screen.dart';
 import 'package:rspct/screens/login_screen.dart';
-// import 'package:rspct/screens/logout_screen.dart';
 import 'package:rspct/screens/registration_screen.dart';
 
 void main() async {

@@ -35,11 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
     //   }
     // );
 
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+    UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim()
     );
 
+    Navigator.pushNamed(context, HomePage.id);
+    
     // pop the loading circle
     // Navigator.of(context).pop();
   }
@@ -48,11 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    FirebaseAuth.instance.authStateChanges().listen((event) {
-      if (event != null) {
-        Navigator.pushNamed(context, HomePage.id);
-      }
-    });
+    // FirebaseAuth.instance.authStateChanges().listen((event) {
+    //   if (event != null) {
+    //     Navigator.pushNamed(context, HomePage.id);
+    //   }
+    // });
   }
 
   @override
@@ -153,8 +155,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   GestureDetector(
                     // onTap: widget.showRegisterScreen,
-                    onTap: () {
-                      Navigator.pushNamed(context, RegistrationScreen.id);
+                    onTap: () async {
+                      UserCredential? credential = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const RegistrationScreen();
+                          },
+                        )
+                      );
+                      // UserCredential? credential = await Navigator.pushNamed(context, RegistrationScreen.id);
+                      if (credential != null) {
+                        Navigator.pushNamed(context, HomePage.id);
+                      }
                     },
                     child: Text(
                       'Register Now!',
