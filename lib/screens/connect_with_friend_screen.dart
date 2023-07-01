@@ -32,28 +32,28 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     });
   }
 
-  void addTestContacts(List<Contact> contacts) {
-    Contact contactDC = Contact(
-      displayName: 'Dick Chaney',
-      givenName: 'Dick',
-      familyName: 'Chaney',
-      phones: [Item(value: '5557830741'), Item(value: '5551234987')]
-    );
-    Contact contactBN = Contact(
-      displayName: 'B N',
-      givenName: 'B',
-      familyName: 'N',
-      phones: [Item(value: '5551234568')]
-    );
-    contacts.add(contactDC);
-    contacts.add(contactBN);
-  }
+  // void addTestContacts(List<Contact> contacts) {
+  //   Contact contactDC = Contact(
+  //     displayName: 'Dick Chaney',
+  //     givenName: 'Dick',
+  //     familyName: 'Chaney',
+  //     phones: [Item(value: '5557830741'), Item(value: '5551234987')]
+  //   );
+  //   Contact contactBN = Contact(
+  //     displayName: 'B N',
+  //     givenName: 'B',
+  //     familyName: 'N',
+  //     phones: [Item(value: '5551234568')]
+  //   );
+  //   contacts.add(contactDC);
+  //   contacts.add(contactBN);
+  // }
 
   void getContacts() async {
     // 1. get all the contacts from the phone
     List<Contact> contacts = await ContactsService.getContacts();
     
-    addTestContacts(contacts);
+    // addTestContacts(contacts);
     
     // 2. from the list of contacts, get the phone numbers and turn to uids
     // 3. access firestore and get the document id's of all the documents that correspond to the uid phone numbers
