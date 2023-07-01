@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:rspct/read_data/get_user_data.dart';
-import 'package:rspct/constants.dart';
-
+import 'package:rspct/utils/constants.dart';
 
 
 class ChooseFriendScreen extends StatefulWidget {
@@ -13,7 +11,6 @@ class ChooseFriendScreen extends StatefulWidget {
   @override
   State<ChooseFriendScreen> createState() => _ChooseFriendScreenState();
 }
-
 
 class _ChooseFriendScreenState extends State<ChooseFriendScreen> {
   final _user = FirebaseAuth.instance.currentUser!;
@@ -82,21 +79,13 @@ class _ChooseFriendScreenState extends State<ChooseFriendScreen> {
                   itemBuilder: (context, index) {
                     RspctContact friend = isSearching == true ? _filteredFriends[index] : _friends[index];
                     return ListTile(
-                      // title: GetUserName(documentID: _docIDs[index]),
                       title: Text(friend.name),
                       leading: CircleAvatar(
                         backgroundColor: Colors.deepPurpleAccent,
                         child: Text(friend.initials),
                       ),
                       onTap: () {
-                        // 1. get the phone number as a uid
-                        // String phone = contact.phones![0].value.toString();
-                        // String name = '${contact.givenName} ${contact.familyName}';
-      
-                        // // 2. use the phone number to connect contact to Firebase
-                        // connectContact(flattenPhone(phone), name);
                         Navigator.pop(context, friend);
-                        // Navigator.of(context).pop();
                       },
                     );
                   },
@@ -106,9 +95,6 @@ class _ChooseFriendScreenState extends State<ChooseFriendScreen> {
           ),
         ),
       ),
-      
-
-      
     );
   }
 }

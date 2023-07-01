@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rspct/constants.dart';
+import 'package:rspct/utils/constants.dart';
 
 
 
@@ -20,7 +20,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
   List<Contact> _contacts = [];
   List<Contact> _filteredContacts = [];
   final Map<String, RspctContact> _contactToRspctContactMap = {};
-  // final Map<String, String> _contactToFirebaseIDMap = {};
   final _searchController = TextEditingController();
 
   @override
@@ -70,9 +69,7 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
                 // 4. hold these in a map from phone uid to document uid
                 // 5. remove the contacts that aren't in the game server
                 availableContacts.add(contact);
-                // _contactToFirebaseIDMap[doc['phone_number']] = doc.id;
                 String name = '${contact.givenName.toString()} ${contact.familyName.toString()}';
-                // String initials = '${contact.givenName.toString()[0]}${contact.familyName.toString()[0]}';
                 _contactToRspctContactMap[doc['phone_number']] = RspctContact(name: name, docID: doc.id);
               }
             }
@@ -82,7 +79,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     );
 
     setState(() {
-      //_contacts = contacts;
       // 6. present the filtered list
       _contacts = availableContacts;
     });
@@ -94,7 +90,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
     if (!await isAlreadyConnected(phone)) {
       await FirebaseFirestore.instance.collection('user_data')
         .doc(_user.displayName).collection('contacts').add({
-          // 'contactID' : _contactToFirebaseIDMap[phone],
           'contactID' : _contactToRspctContactMap[phone]!.docID,
           'contactName' : _contactToRspctContactMap[phone]!.name,
       });
@@ -111,7 +106,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
       (snapshot) {
         for (var doc in snapshot.docs) {
           String docContactID = doc['contactID'];
-          // String mapContactID = _contactToFirebaseIDMap[phone]!;
           String mapContactID = _contactToRspctContactMap[phone]!.docID;
           if (docContactID == mapContactID) {
             isConnected = true;
@@ -196,7 +190,6 @@ class _ConnectWithFriendState extends State<ConnectWithFriendScreen> {
       body: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(

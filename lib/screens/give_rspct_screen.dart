@@ -3,10 +3,10 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:rspct/buttons.dart';
-import 'package:rspct/rspct_icons.dart';
+import 'package:rspct/utils/buttons.dart';
+import 'package:rspct/utils/rspct_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rspct/constants.dart';
+import 'package:rspct/utils/constants.dart';
 import 'package:rspct/screens/choose_friend_screen.dart';
 
 
@@ -20,7 +20,6 @@ class GiveRspctScreen extends StatefulWidget {
 }
 
 class _GiveRspctState extends State<GiveRspctScreen> {
-  // final User _user = FirebaseAuth.instance.currentUser!;
   int _rating = 0;
   RspctContact? _chosenFriend;
   String _chosenFriendStr = 'Choose a Friend';
@@ -135,10 +134,12 @@ class _GiveRspctState extends State<GiveRspctScreen> {
                   });
                 }
               ),
+
               const SizedBox(height: 50,),
 
               // Apply button
               RspctButtonStateless(text: 'Give Rspct', func: sendRspct),
+              
               const SizedBox(height: 50,),
 
               Text(

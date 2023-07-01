@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:rspct/constants.dart';
-import 'package:rspct/buttons.dart';
+import 'package:rspct/utils/constants.dart';
+import 'package:rspct/utils/buttons.dart';
 
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -17,7 +16,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPasswordScreen> {
-
   final _emailController = TextEditingController();
 
   @override
@@ -83,21 +81,25 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
               'images/rspct_logo.png',
             ),
           ),
-          const SizedBox(
-            height: 200.0,
-          ),
+          
+          const SizedBox(height: 200.0,),
+          
           const Text(
             'Enter your email to reset your password',
             style: TextStyle(
               fontWeight: FontWeight.bold
             ),
           ),
+
           const SizedBox(height: 10,),
+
           LoginTextField(
             controller: _emailController,
             hintText: 'Email',
           ),
+
           const SizedBox(height: 10,),
+          
           Container(
             width: 1000,
             height: 50,
@@ -115,6 +117,7 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
+          
           const SizedBox(height: 100,)
         ]
       ),

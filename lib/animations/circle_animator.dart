@@ -1,8 +1,8 @@
 // ignore_for_file: sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+
 
 class CircleAnimatorWidget extends StatefulWidget {
   const CircleAnimatorWidget({ 

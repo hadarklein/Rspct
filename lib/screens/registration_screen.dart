@@ -2,14 +2,14 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rspct/constants.dart';
+import 'package:rspct/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rspct/buttons.dart';
+import 'package:rspct/utils/buttons.dart';
+
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key, /*required this.showLoginScreen*/}) : super(key: key);
-  // final VoidCallback showLoginScreen;
+  const RegistrationScreen({Key? key,}) : super(key: key);
 
   static const id = 'registration_screen';
 
@@ -22,7 +22,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
-  // final _displaynameController = TextEditingController();
   final _firstnameController = TextEditingController();
   final _lastnameController = TextEditingController();
   
@@ -49,15 +48,13 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       String phone = flattenPhone(_phoneController.text.trim());
       if (await phoneIdExists(phone)) {
         // if already registered, delete user
-        // pop up
         await openPhoneErrorDialog();
 
         deleteUser(credential);
       } else {
         // else register metadata to Firebase
         String userDataId = await addUserData(
-          // _displaynameController.text.trim(),
-          phone,//_phoneController.text.trim(),
+          phone,
           _firstnameController.text.trim(),
           _lastnameController.text.trim(),
           _emailController.text.trim()
@@ -65,8 +62,8 @@ class _RegistrationScreen extends State<RegistrationScreen> {
 
         User? user = credential.user;
         await user?.updateDisplayName(userDataId);
-        // user?.updateDisplayName(_displaynameController.text.trim());
-
+        
+        // ignore: use_build_context_synchronously
         Navigator.pop(context, credential);
       }
     } else {
@@ -74,9 +71,8 @@ class _RegistrationScreen extends State<RegistrationScreen> {
     }
   }
 
-  Future<String> addUserData(/*String displayname,*/ String phone, String firstname, String lastname, String email) async {
+  Future<String> addUserData(String phone, String firstname, String lastname, String email) async {
     var userDataId = await FirebaseFirestore.instance.collection('user_data').add({
-      // 'displayname' : displayname,
       'phone_number' : phone,
       'first_name' : firstname,
       'last_name' : lastname,
@@ -85,10 +81,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
       'points' : 0
     });
     return userDataId.id;
-    // await FirebaseFirestore.instance.collection('user_data').doc(user_data_id.id).collection('connections').add({
-    //   'connection_name' : 'blerg',
-    //   'connection_id' : 'honk'
-    // });
   }
 
   bool passwordConfirmed() {
@@ -142,7 +134,7 @@ class _RegistrationScreen extends State<RegistrationScreen> {
   );
 
   void ok() {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 
   @override
@@ -150,7 +142,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _passwordConfirmController.dispose();
-    // _displaynameController.dispose();
     _phoneController.dispose();
     _firstnameController.dispose();
     _lastnameController.dispose();
@@ -209,9 +200,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
 
               SizedBox(height: 10,),
 
-              // // display name textfield
-              // LoginTextField(controller: _displaynameController, hintText: 'Display Name'),
-
               // phone number - used as an UID for finding contacts from phone book
               LoginTextField(
                 controller: _phoneController, 
@@ -219,7 +207,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
               ),
 
               SizedBox(height: 10,),
-
   
               // email textfield
               LoginTextField(
@@ -278,14 +265,15 @@ class _RegistrationScreen extends State<RegistrationScreen> {
                     ),
                   ),
                   GestureDetector(
-                    // onTap: widget.showLoginScreen,
                     onTap: () {
                       Navigator.pop(context);
                     },
                     child: Text(
                       'Sign In Now!',
                       style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
+                        color: Colors.blue, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                   )
                 ],
@@ -297,5 +285,3 @@ class _RegistrationScreen extends State<RegistrationScreen> {
     );
   }
 }
-
-

@@ -1,17 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rspct/constants.dart';
+import 'package:rspct/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rspct/screens/forgot_pw_screen.dart';
-import 'package:rspct/buttons.dart';
+import 'package:rspct/utils/buttons.dart';
 import 'package:rspct/screens/home_page_screen.dart';
 import 'package:rspct/screens/registration_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key, /*required this.showRegisterScreen*/}) : super(key: key);
-  // final VoidCallback showRegisterScreen;
+  const LoginScreen({Key? key, }) : super(key: key);
 
   static const id = 'login_screen';
 
@@ -24,37 +23,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return Center(
-    //       child: CircularProgressIndicator(
-    //         color: Colors.deepOrangeAccent,
-    //       ),
-    //     );
-    //   }
-    // );
-
-    UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim()
     );
 
     Navigator.pushNamed(context, HomePage.id);
-    
-    // pop the loading circle
-    // Navigator.of(context).pop();
   }
 
   @override
   void initState() {
     super.initState();
-
-    // FirebaseAuth.instance.authStateChanges().listen((event) {
-    //   if (event != null) {
-    //     Navigator.pushNamed(context, HomePage.id);
-    //   }
-    // });
   }
 
   @override
@@ -154,7 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   GestureDetector(
-                    // onTap: widget.showRegisterScreen,
                     onTap: () async {
                       UserCredential? credential = await Navigator.push(
                         context,
@@ -164,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         )
                       );
-                      // UserCredential? credential = await Navigator.pushNamed(context, RegistrationScreen.id);
+
                       if (credential != null) {
                         Navigator.pushNamed(context, HomePage.id);
                       }

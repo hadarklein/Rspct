@@ -2,30 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-TextStyle hiddenDrawerFontStyle = const TextStyle(
-  fontWeight: FontWeight.bold,
-  color: Colors.white,
-  fontSize: 16.5,
-  shadows: [
-    Shadow( // bottomLeft
-      offset: Offset(-0.5, -0.5),
-      color: Colors.black
-    ),
-    Shadow( // bottomRight
-      offset: Offset(0.5, -0.5),
-      color: Colors.black
-    ),
-    Shadow( // topRight
-      offset: Offset(0.5, 0.5),
-      color: Colors.black
-    ),
-    Shadow( // topLeft
-      offset: Offset(-0.5, 0.5),
-      color: Colors.black
-    ),
-  ]
-);
-
 class LoginTextField extends StatelessWidget {
   const LoginTextField(
       {Key? key,
@@ -75,13 +51,11 @@ class RspctContact {
 }
 
 Future<List<RspctContact>> getContactIDsFromUser(String userDocID) async {
-  // List<String> docIDs = [];
   List<RspctContact> contacts = [];
   await FirebaseFirestore.instance.collection('user_data').doc(userDocID)
     .collection('contacts').get().then(
     (snapshot) {
       for (var doc in snapshot.docs) {
-        // docIDs.add(doc['contactID']);
         RspctContact contact = RspctContact(name: doc['contactName'], docID: doc['contactID']);
         contacts.add(contact);
       }
@@ -89,7 +63,6 @@ Future<List<RspctContact>> getContactIDsFromUser(String userDocID) async {
   );
   return contacts;
 }
-
 
 drawerNavigation(BuildContext context, Widget screen) {
   Navigator.pop(context);
