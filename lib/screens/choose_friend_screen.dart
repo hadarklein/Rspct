@@ -37,7 +37,18 @@ class _ChooseFriendScreenState extends State<ChooseFriendScreen> {
   }
 
   void filterFriends() {
-    
+    List<RspctContact> friends = [];
+    friends.addAll(_friends);
+    if (_searchController.text.isNotEmpty) {
+      friends.retainWhere((friend) {
+        String searchTerm = _searchController.text.toLowerCase();
+        String friendName = friend.name.toLowerCase();
+        return friendName.contains(searchTerm);
+      });
+    }
+    setState(() {
+      _filteredFriends = friends;
+    });
   }
 
   @override

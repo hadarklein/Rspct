@@ -107,15 +107,19 @@ class _RegistrationScreen extends State<RegistrationScreen> {
 
   Future<bool> phoneIdExists(String phone) async {
     bool phoneExists = false;
-    // await FirebaseFirestore.instance.collection('user_data').get().then(
-    //   (snapshot) => snapshot.docs.forEach(
-    //     (doc) {
-    //       // String id = doc.reference.id;
-    //       if (doc['phone_number'] == phone) {
-    //         phoneExists = true;
-    //       }
-    //     })
-    // );
+
+    await FirebaseFirestore.instance.collection('user_data').get().then(
+      (snapshot) {
+        for (var doc in snapshot.docs) {
+          String docPhone = doc['phone_number'];
+          String registerPhone = phone;
+          if (docPhone == registerPhone) {
+            phoneExists = true;
+          }
+        }
+      }
+    );
+
     return phoneExists;
   }
   
